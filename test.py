@@ -7,10 +7,10 @@ if __name__ == "__main__":
     chrome = Chrome()
 
     # qa testing
-    eventbrite = Eventbrite("67VOYMMCVHGIJFZEUKZE", environment="qa")
+    eventbrite = Eventbrite("", environment="qa")
 
     # prod testing
-    # eventbrite = Eventbrite("ONHX3I7N22ATH5CJJTIV", environment="production")
+    # eventbrite = Eventbrite("", environment="production")
 
     my_event_data = eventbrite.create_event_data(
         name="hello this is my test event",
