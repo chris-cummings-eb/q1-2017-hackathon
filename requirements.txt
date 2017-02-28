@@ -1,0 +1,2 @@
+eventbrite==3.3.3
+pyobjc==3.2.1
