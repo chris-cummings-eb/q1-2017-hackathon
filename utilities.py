@@ -109,12 +109,13 @@ def extract_email_address(string):
     return match.group(0) if match else None
 
 
+def get_axios_javascript_lib():
+    """returns the contents of axios.min.js as a string"""
+    return get_javascript_from_file("vendor/axios.min.js", export="ALL")
+
+
 def get_clipboard_javascript_lib():
-    """
-    helper method that gets the clipboard library to make extracting values from the dom possible
-    via the system clipboard
-    meant to be used in combo with other javascript executed in a tab
-    """
+    """returns the contents of clipboard.min.js as a string"""
     return get_javascript_from_file("vendor/clipboard.min.js", export="ALL")
 
 

@@ -9,6 +9,7 @@ from ScriptingBridge import SBApplication
 # utilites and helpers from the automation library
 from utilities import (
     eventbrite_url_constructor,
+    get_axios_javascript_lib,
     get_clipboard_javascript_lib,
     get_javascript_from_file,
     is_event_id,
@@ -16,6 +17,9 @@ from utilities import (
     is_organizer_id,
     is_email_address
 )
+
+# the server is used to receive values from the DOM
+from server import server, shutdown_server, LAST_REQUEST
 
 
 class Chrome(object):
@@ -114,42 +118,15 @@ class Chrome(object):
 
     def open_event_listing(self, event_id, environment="production", parameters=None):
         """opens a new tab at the event's listing page, returns the tab object for the created tab"""
-
-        if not is_event_id(event_id):
-            raise ValueError("{} is not a valid Eventbrite Event ID".format(event_id))
-
-        url = eventbrite_url_constructor(
-            "e/{event_id}".format(event_id=event_id),
-            parameters=parameters
-        )
-        return self.new_tab_at_url(url)
+        return self._open_event_page_location(event_id, "e")
 
     def open_event_edit_page(self, event_id, environment="production"):
         """opens a new tab on the Edit Page of an event id, returns the tab object"""
-
-        if is_event_id(event_id):
-            url = eventbrite_url_constructor(
-                "edit",
-                environment=environment,
-                parameters={"eid": event_id}
-            )
-            return self.new_tab_at_url(url)
-
-        else:
-            raise ValueError("{} is not a valid Eventbrite Event ID".format(event_id))
+        return self._open_event_page_location(event_id, "edit")
 
     def open_event_manage_page(self, event_id, environment="production"):
         """opens a new tab on the Manage Page of an event id, returns the tab object"""
-
-        if is_event_id(event_id):
-            url = eventbrite_url_constructor(
-                "myevent",
-                parameters={"eid": event_id}
-            )
-            return self.new_tab_at_url(url)
-
-        else:
-            raise ValueError("{} is not a valid Eventbrite Event ID".format(event_id))
+        return self._open_event_page_location(event_id, "myevent")
 
     # --------
     # TODO: add all of the location methods
@@ -219,27 +196,59 @@ class Chrome(object):
     # use at your own risk, or ask for help if you have any questions!
     # - - - - - - - - - - - - - - - - - - - - - - - -
 
-    def __init__(self):
-        self.driver = SBApplication.applicationWithBundleIdentifier_("com.google.Chrome")
-
     def _append_tab_to_window(self, tab_object, window_index=0):
+        """push an initialized tab onto a window's tabs array"""
         self.windows()[window_index].tabs().append(tab_object)
 
     def _append_window_to_application(self, window_object):
+        """effectively, this method is just "drawing" the window"""
         self.windows().append(window_object)
+
+    @staticmethod
+    def _click_DOM_element(tab, element_id):
+        """use javascript to click an element in a tab's DOM"""
+        js = get_javascript_from_file("./javascript/snippets.js", export="clickElement")
+        tab.executeJavasctipt_(js)
 
     def _create_tab_object(self, properties={}):
         """
+        helper method to allocate and initialze tab objects
         call this with a properties dict to initialize the object with props
-        example:
-        self._create_tab_object({
-            "URL": "https://www.eventbrite.com/"
-        })
+        URL is actually the only writeable property...
+        >>>self._create_tab_object({ "URL": "https://www.eventbrite.com/" })
+        <GoogleChromeTab object>
         """
         return self.driver.classForScriptingClass_("tab").alloc().initWithProperties_(properties)
 
     def _create_window_object(self, properties={}):
         return self.driver.classForScriptingClass_("window").alloc().initWithProperties_(properties)
+
+    @staticmethod
+    def _get_value_of_DOM_element(tab, element_id):
+        # start the Flask server
+        server.run()
+
+        js = """{axios}\n{func}\npassValueToFlask({elemend_id})""".format(
+            axios=get_axios_javascript_lib(),
+            func=get_javascript_from_file("./javascript/snippets.js", export="passValueToFlask"),
+            elemend_id=elemend_id
+        )
+        tab.executeJavasctipt_(js)
+
+        value = LAST_REQUEST
+        shutdown_server()
+
+        return LAST_REQUEST
+
+    def _open_event_page_location(self, event_id, path):
+        """convenience helper method for opening various event pages (ie manage, waitlist etc)"""
+        if is_event_id(event_id):
+
+            url = eventbrite_url_constructor(path, parameters={"eid": event_id})
+            return self.new_tab_at_url(url)
+
+        else:
+            raise ValueError("{} is not a valid Eventbrite Event ID".format(event_id))
 
     @staticmethod
     def _do_after_tab_loads(tab, callback, *args, **kwargs):
@@ -254,13 +263,19 @@ class Chrome(object):
 
     @staticmethod
     def _execute_javascript_in_tab(tab, javascript):
-        """
-        just a convenience method for calling the executeJavasctipt_ method on tab objects
-        """
+        """convenience method for calling the executeJavasctipt_ method on tab objects"""
         return tab.executeJavascript_(javascript)
 
     @staticmethod
     def _set_tab_url_to(tab, url):
-        tab.executeJavascript_(
-            """window.location = {url}""".format(url=url)
+        """convenience method for using js to move a tab to a new url"""
+        tab.executeJavascript_("""window.location = {}""".format(url))
+
+    def __str__(self):
+        return "GoogleChrome App Scripting Bridge - {win} open windows, {tab} total tabs".format(
+            win=len(self.windows()),
+            tab=len([tab for window in self.windows() for tab in window.tabs()])
         )
+
+    def __init__(self):
+        self.driver = SBApplication.applicationWithBundleIdentifier_("com.google.Chrome")

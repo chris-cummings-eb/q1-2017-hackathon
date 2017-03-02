@@ -2,5 +2,6 @@ venv/
 __pycache__/
 private/
 
+.DS_Store
 *.pyc
 *tmp.py
