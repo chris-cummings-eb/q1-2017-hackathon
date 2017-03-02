@@ -1,15 +1,15 @@
 *Clone this repo*  
 `git clone https://github.com/chris-cummings-eb/q1-2017-hackathon.git`  
 
-*Create and activate a python3 virtual environment*  
-`virtualenv -p python3 venv`
-`. venv/bin/activate`
+**Create and activate a python3 virtual environment**  
+`virtualenv -p python3 venv`  
+`. venv/bin/activate`  
 
-*Install the Eventbrite python SDK and pyobjc*  
+**Install the Eventbrite python SDK and pyobjc**  
 From your activated virtual environment run  
 `pip install -r requirements.txt`  
 
-*Example*
+**Example**
 ```python
 from eb_wrapper import Eventbrite
 from chrome import Chrome
