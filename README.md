@@ -1,8 +1,15 @@
-*Install the Eventbrite python SDK and pyobjc*
-From your activated virtual environment run
-`pip install eventbrite`
-`pip install pyobjc`
+*Clone this repo*  
+`git clone https://github.com/chris-cummings-eb/q1-2017-hackathon.git`  
 
+*Create and activate a python3 virtual environment*  
+`virtualenv -p python3 venv`
+`. venv/bin/activate`
+
+*Install the Eventbrite python SDK and pyobjc*  
+From your activated virtual environment run  
+`pip install -r requirements.txt`  
+
+*Example*
 ```python
 from eb_wrapper import Eventbrite
 from chrome import Chrome
@@ -15,3 +22,4 @@ chrome.open_tab_at_url(response["event"]["url"])
 ```
 
 More examples can be found in `example_usage.py`
+Feel free to just run it try it out `python example_usage.py`

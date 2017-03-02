@@ -5,12 +5,15 @@ from chrome import Chrome
 from eb_wrapper import Eventbrite
 from utilities import create_timestamp, get_clipboard_javascript_lib
 
+# import your own tokens something like this
 from private.auth_constants import PROD_TOKEN, QA_TOKEN
 
 
 def test_eb_wrapper():
         chrome = Chrome()
 
+        # REMEMBER: you'll need to create your own tokens
+        # and import them
         eventbrite = Eventbrite(QA_TOKEN, environment="qa")
         # eventbrite = Eventbrite(PROD_TOKEN, environment="production")
 
