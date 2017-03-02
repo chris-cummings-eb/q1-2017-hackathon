@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from eventbrite import Eventbrite as Eb
-
+from utilities import create_timestamp
 
 API_URLS = {
     "production": "https://www.eventbriteapi.com/v3/",
@@ -29,14 +29,13 @@ class Eventbrite(Eb):
         """
 
         start_time = datetime.now() + timedelta(days=30)
-        end_time = start_time + timedelta(hours=3)
 
         event_data = {
             "event.name.html": "Test Event: {date}".format(date=datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
             "event.description.html": "Event description text.",
-            "event.start.utc": start_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "event.start.utc": create_timestamp(start_time),
             "event.start.timezone": "America/Chicago",
-            "event.end.utc": end_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "event.end.utc": create_timestamp(start_time + timedelta(hours=3)),
             "event.end.timezone": "America/Chicago",
             "event.currency": "USD",
             "event.organizer_id": "",
