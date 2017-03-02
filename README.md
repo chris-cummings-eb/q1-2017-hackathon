@@ -1,4 +1,4 @@
-*Clone this repo*  
+**Clone this repo**  
 `git clone https://github.com/chris-cummings-eb/q1-2017-hackathon.git`  
 
 **Create and activate a python3 virtual environment**  
