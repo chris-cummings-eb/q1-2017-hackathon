@@ -7,15 +7,9 @@ from urllib.parse import quote_plus
 from ScriptingBridge import SBApplication
 
 # utilites and helpers from the automation library
-from utilities import (
-    eventbrite_url_constructor,
-    get_axios_javascript_lib,
-    get_clipboard_javascript_lib,
-    get_javascript_from_file,
-    is_event_id,
-    is_order_id,
-    is_organizer_id,
-    is_email_address
+from utils.helper_functions import *
+from utils.window_helpers import (
+    set_window_size_by_percent
 )
 
 # the server is used to receive values from the DOM
@@ -60,6 +54,15 @@ class Chrome(object):
     #
     # PROTIP: Take advantage of the open_event_[LOCATION]_page methods in the next section
     # ---------------------------------------------------
+    def open_salesforce_eventbrite_admin_side_by_side(self, salesforce_query, eventbrite_query):
+        """A sample method for how to view two customized things at once"""
+
+        sf_win, sf_tab = self.new_window_with_tab(url="https://salesforce.com")
+        eb_win, eb_tab = self.new_window_with_tab(url=admin_search_url(eventbrite_query))
+        self.vertical_split_window(window=sf_win, side="left")
+        self.vertical_split_window(window=eb_win, side="right")
+
+        return sf_tab, eb_tab
 
     def get_eventbrite_tab(self):
         """returns the first eventbrite tab object"""
@@ -93,12 +96,7 @@ class Chrome(object):
 
     def search_eventbrite_admin(self, query, environment="production", new_tab=True):
         """opens a new tab in Eventbrite Admin search, returns the tab object for the created tab"""
-        url = eventbrite_url_constructor(
-            "admin/search/",
-            subdomain="admin",
-            parameters={"search_query": query},
-            environment=environment
-        )
+        url = admin_search_url(query)
         if new_tab:
             return self.new_tab_at_url(url)
         else:
@@ -152,16 +150,29 @@ class Chrome(object):
 
         return tab
 
-    def new_window_with_tab_at_url(self, url):
-        """creates a new window with a tab open at the specified url, returns the new tab object"""
+    def new_window_with_tab(self, url=None):
+        """creates a new window with a tab open at the specified url, returns the window and the tab"""
         window = self._create_window_object()
-        tab = self._create_tab_object({
-            "URL": url
-        })
+
+        if url is not None:
+            # create new tab at url
+            tab = self._create_tab_object({"URL": url})
+
         self._append_window_to_application(window)
         self._append_tab_to_window(tab)
 
-        return tab
+        # close default tab if new tab was created
+        tabs = window.tabs()
+        if len(tabs) > 1:
+            tabs[0].close()
+
+        return window, tab
+
+    def vertical_split_window(self, side="left", window=0):
+        """resizes the window passed in or at the window_index and returns the size data"""
+        if isinstance(window, int):
+            window = self.windows(window)
+        return set_window_size_by_percent(window, 50, 100, position=("upper", side))
 
     def tabs(self):
         """returns a list of tab objects for each tab in each window"""
@@ -187,9 +198,10 @@ class Chrome(object):
         """
         return [t for t in self.tabs() if re.search(pattern, t.URL())]
 
-    def windows(self):
-        """returns a list of all open window objects"""
-        return self.driver.windows()
+    def windows(self, index=None):
+        """returns a list of all open window objects or the window at the specified index"""
+        windows = self.driver.windows()
+        return windows[index] if index is not None else windows
 
     # - - - - - - - - - - - - - - - - - - - - - - - -
     # the methods below are NOT MEANT FOR USE IN THE HACKATHON COURSE.
@@ -270,6 +282,11 @@ class Chrome(object):
     def _set_tab_url_to(tab, url):
         """convenience method for using js to move a tab to a new url"""
         tab.executeJavascript_("""window.location = {}""".format(url))
+
+    @staticmethod
+    def _set_window_position_to(window, position=[0, 0]):
+        """set the position of a window object in pixels"""
+        window.setPosition_(position)
 
     def __str__(self):
         return "GoogleChrome App Scripting Bridge - {win} open windows, {tab} total tabs".format(

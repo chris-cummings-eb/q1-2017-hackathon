@@ -73,6 +73,15 @@ def eventbrite_url_constructor(path, parameters=None, environment="production", 
     )
 
 
+def admin_search_url(query, environment="production"):
+    return eventbrite_url_constructor(
+                "admin/search/",
+                subdomain="admin",
+                parameters={"search_query": query},
+                environment=environment
+            )
+
+
 def is_event_id(string):
     return bool(re.match(EB_EVENT_REGEX, string))
 
