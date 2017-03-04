@@ -1,0 +1,11 @@
+{
+  "name": "automation_snippets",
+  "version": "0.0.1",
+  "description": "automation",
+  "main": "index.js",
+  "author": "Chris Cummings",
+  "license": "MIT",
+  "devDependencies": {
+    "webpack": "^2.2.1"
+  }
+}

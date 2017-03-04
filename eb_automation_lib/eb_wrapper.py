@@ -1,11 +1,12 @@
+# from the python standard library
 from datetime import datetime, timedelta
-from eventbrite import Eventbrite as Eb
-from utilities import create_timestamp
 
-API_URLS = {
-    "production": "https://www.eventbriteapi.com/v3/",
-    "qa": "https://www.evbqaapi.com/v3/"
-}
+# third party dependecies
+from eventbrite import Eventbrite as Eb
+
+# modules from this library
+from .utils.helper_functions import create_timestamp
+from .constants import API_URLS
 
 
 class Eventbrite(Eb):

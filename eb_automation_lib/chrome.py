@@ -7,13 +7,13 @@ from urllib.parse import quote_plus
 from ScriptingBridge import SBApplication
 
 # utilites and helpers from the automation library
-from utils.helper_functions import *
-from utils.window_helpers import (
+from .utils.helper_functions import *
+from .utils.window_helpers import (
     set_window_size_by_percent
 )
 
 # the server is used to receive values from the DOM
-from server import server, shutdown_server, LAST_REQUEST
+from .server import server, shutdown_server, LAST_REQUEST
 
 
 class Chrome(object):

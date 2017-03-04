@@ -1,18 +1,22 @@
-**Clone this repo**  
-`git clone https://github.com/chris-cummings-eb/q1-2017-hackathon.git`  
-
-**Create and activate a python3 virtual environment**  
-`virtualenv -p python3 venv`  
-`. venv/bin/activate`  
-
-**Install the Eventbrite python SDK and pyobjc**  
-From your activated virtual environment run  
-`pip install -r requirements.txt`  
-
+# How to use
+## 1. Create and activate a python3 virtual environment
+`$ virtualenv -p python3 venv`  
+`$ . venv/bin/activate`
+## 2. Clone this repo
+`$ git clone https://github.com/chris-cummings-eb/q1-2017-hackathon.git`  
+## 3. install the library
+```
+$ cd q1-2017-hackathon
+$ pip install -e .
+```
+## 4. change to your project directory and use the lib like this
 **Example**
 ```python
-from eb_wrapper import Eventbrite
-from chrome import Chrome
+# import the library
+from eb_automation_lib import Chrome, Eventbrite
+
+# import your own tokens something like this
+from private.auth_constants import PROD_TOKEN, QA_TOKEN
 
 eventbrite = Eventbrite(TOKEN)
 response = eventbrite.create_event()
@@ -20,9 +24,6 @@ response = eventbrite.create_event()
 chrome = Chrome()
 chrome.open_tab_at_url(response["event"]["url"])
 ```
-
-More examples can be found in `example_usage.py`
-Feel free to just run it try it out `python example_usage.py`
 
 #How to contribute to this library
 1. Follow the installation instructions above
