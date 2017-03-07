@@ -4,7 +4,6 @@ import { Divider, Input } from 'semantic-ui-react'
 
 const FilterInput = props => (
   <div>
-    <Divider />
     <Input
       fluid
       icon="filter"

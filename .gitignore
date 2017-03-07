@@ -1,6 +1,6 @@
 __pycache__/
-/coverage/
-/node_modules/
+coverage/
+node_modules/
 /*.egg-info
 
 .DS_Store
