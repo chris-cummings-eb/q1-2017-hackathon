@@ -1,4 +1,3 @@
-# modules from the python standard library
 import re
 from time import sleep
 from urllib.parse import quote_plus
@@ -11,9 +10,6 @@ from .utils.helper_functions import *
 from .utils.window_helpers import (
     set_window_size_by_percent
 )
-
-# the server is used to receive values from the DOM
-from .server import server, shutdown_server, LAST_REQUEST
 
 
 class Chrome(object):
@@ -234,23 +230,6 @@ class Chrome(object):
 
     def _create_window_object(self, properties={}):
         return self.driver.classForScriptingClass_("window").alloc().initWithProperties_(properties)
-
-    @staticmethod
-    def _get_value_of_DOM_element(tab, element_id):
-        # start the Flask server
-        server.run()
-
-        js = """{axios}\n{func}\npassValueToFlask({elemend_id})""".format(
-            axios=get_axios_javascript_lib(),
-            func=get_javascript_from_file("./javascript/snippets.js", export="passValueToFlask"),
-            elemend_id=elemend_id
-        )
-        tab.executeJavasctipt_(js)
-
-        value = LAST_REQUEST
-        shutdown_server()
-
-        return LAST_REQUEST
 
     def _open_event_page_location(self, event_id, path):
         """convenience helper method for opening various event pages (ie manage, waitlist etc)"""

@@ -25,6 +25,13 @@ class App extends Component {
     }
   }
 
+  componentDidMount() {
+    const socket = io('http://localhost:5555') // eslint-disable-line no-undef
+    socket.on('connect', () => console.log('connected')) // eslint-disable-line no-console
+    socket.on('event', () => console.log('there was an event')) // eslint-disable-line no-console
+    socket.on('message', message => console.log(message)) // eslint-disable-line no-console
+  }
+
   automationsFilter(filter) {
     this.setState((prevState) => {
       const pattern = new RegExp(filter)
@@ -57,6 +64,7 @@ class App extends Component {
       return { ...prevState, automations: updatedAutomations }
     })
   }
+
 
   render() {
     const { automations } = this.state

@@ -14,13 +14,13 @@ const wrapApp = AppComponent => (
   </AppContainer>
 )
 
-ReactDOM.render(wrapApp(App), root)
+ReactDOM.render(<App />, root)
 
-if (module.hot) {
+// if (module.hot) {
   // flow-disable-next-line
-  module.hot.accept('./', () => {
-    // eslint-disable-next-line global-require
-    const NextApp = require('./components/App').default
-    ReactDOM.render(wrapApp(NextApp), root)
-  })
-}
+  // module.hot.accept('./', () => {
+    // // eslint-disable-next-line global-require
+    // const NextApp = require('./components/App').default
+    // ReactDOM.render(wrapApp(NextApp), root)
+  // })
+// }

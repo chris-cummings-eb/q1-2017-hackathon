@@ -12,7 +12,8 @@ setup(
     install_requires=[
         "pyobjc",
         "eventbrite",
-        "flask"
+        "flask",
+        "flask-socketio",
     ],
     zip_safe=False
 )
