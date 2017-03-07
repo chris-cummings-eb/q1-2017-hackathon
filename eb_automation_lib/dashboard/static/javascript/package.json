@@ -1,0 +1,43 @@
+{
+  "name": "automator-dashboard",
+  "version": "0.0.1",
+  "description": "trigger automations by clicking their name",
+  "main": "index.jsx",
+  "repository": "https://github.com/chris-cummings-eb/q1-2017-hackathon",
+  "author": "chris cummings",
+  "license": "MIT",
+  "scripts": {
+    "start": "webpack-dev-server --progress",
+    "test": "eslint src && flow && jest --coverage",
+    "lint": "eslint src webpack.config.babel.js --ext .js,.jsx",
+    "precommit": "yarn test"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.23.0",
+    "babel-core": "^6.23.1",
+    "babel-eslint": "^7.1.1",
+    "babel-jest": "^19.0.0",
+    "babel-loader": "^6.4.0",
+    "babel-preset-env": "^1.2.1",
+    "babel-preset-flow": "^6.23.0",
+    "babel-preset-react": "^6.23.0",
+    "babel-preset-stage-3": "^6.22.0",
+    "eslint": "^3.17.1",
+    "eslint-config-airbnb": "latest",
+    "eslint-plugin-flowtype": "^2.30.2",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^3.0.2 || ^4.0.0",
+    "eslint-plugin-react": "^6.9.0",
+    "flow-bin": "^0.41.0",
+    "jest": "^19.0.2",
+    "webpack": "^2.2.1",
+    "webpack-dev-server": "^2.4.1"
+  },
+  "dependencies": {
+    "babel-polyfill": "^6.23.0",
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2",
+    "react-hot-loader": "next",
+    "semantic-ui-react": "^0.67.0"
+  }
+}
