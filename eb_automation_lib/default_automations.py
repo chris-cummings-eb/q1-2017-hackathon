@@ -1,10 +1,11 @@
-from ..chrome import Chrome as __Chrome
+from .chrome import Chrome
 
 
 def open_event_listing(event_id='27849228793', environment="qa"):
     """description text"""
-    chrome = __Chrome()
-    chrome.open_event_listing(event_id, environment=environment)
+    pass
+    # chrome = Chrome()
+    # chrome.open_event_listing(event_id, environment=environment)
 
 
 def somefunc():

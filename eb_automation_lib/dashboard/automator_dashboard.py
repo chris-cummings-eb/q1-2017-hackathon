@@ -18,7 +18,7 @@ from flask_socketio import (
 
 from ..utils import import_utils
 from ..task import Queue, Task
-from . import default_automations
+from .. import default_automations
 
 
 def _serialize(module_list=[], include_defaults=True):

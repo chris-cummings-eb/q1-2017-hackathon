@@ -1,9 +1,10 @@
 import re
 from time import sleep
-from urllib.parse import quote_plus
 
 # third party dependecies
 from ScriptingBridge import SBApplication
+
+from .task import Task, Queue
 
 # utilites and helpers from the automation library
 from .utils.helper_functions import *
@@ -275,3 +276,4 @@ class Chrome(object):
 
     def __init__(self):
         self.driver = SBApplication.applicationWithBundleIdentifier_("com.google.Chrome")
+        self.queue = Queue(max_workers=8)
