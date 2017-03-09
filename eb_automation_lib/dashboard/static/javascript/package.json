@@ -8,6 +8,8 @@
   "license": "MIT",
   "scripts": {
     "start": "webpack-dev-server --progress",
+    "build": "webpack -d --progress",
+    "devbuild": "webpack -d -w --progress",
     "test": "eslint src && flow && jest --coverage",
     "lint": "eslint src webpack.config.babel.js --ext .js,.jsx",
     "precommit": "yarn test"
@@ -38,6 +40,7 @@
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
     "react-hot-loader": "next",
-    "semantic-ui-react": "^0.67.0"
+    "semantic-ui-react": "^0.67.0",
+    "socket.io-client": "^1.7.3"
   }
 }

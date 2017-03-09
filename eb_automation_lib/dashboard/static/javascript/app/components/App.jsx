@@ -8,62 +8,71 @@ import FilterInput from './FilterInput'
 class App extends Component {
   constructor() {
     super()
+    this.socket = io('http://localhost:5555') // eslint-disable-line no-undef
     this.state = {
-      automations: [
-        { id: 1, name: 'do cool thing 1', func: 'cool_thing_1', filtered: false, description: 'its so cool yo', dispatched: false, hidden: false },
-        { id: 2, name: 'do cool thing 2', func: 'cool_thing_2', filtered: false, dispatched: false, hidden: false },
-        { id: 3, name: 'do cool thing 3', func: 'cool_thing_3', filtered: false, description: 'so chill', dispatched: false, hidden: false },
-        { id: 4, func: 'no-name-bitches', filtered: false, description: 'I don\'t have a fuckin name bitches!', dispatched: false, hidden: false },
-      ],
-      filter: '',
+      automations: [],
     }
   }
+  componentDidMount() {
+    this.socket.on('automations_list_update', data => this.updateAutomations(data.automations))
+  }
 
-  automationsFilter() {
+  updateAutomations(list) {
+    this.setState(prevState => ({
+      ...prevState,
+      automations: list.map(e => Object.assign({}, e, { filtered: false, hidden: false })),
+    }))
+  }
+
+  automationsFilter(filter) {
     this.setState((prevState) => {
-      const { automations, filter } = prevState
       const pattern = new RegExp(filter)
+      const updatedAutomations = prevState.automations.map((e) => {
+        if (filter.length < 1) {
+          return { ...e, filtered: false }
+        } else if (
+            pattern.test(e.name) ||
+            pattern.test(e.object_name) ||
+            pattern.test(e.description)
+          ) {
+          return { ...e, filtered: false }
+        }
+        return { ...e, filtered: true }
+      })
 
-      return (
-        automations.map((e) => {
-          if (filter.length < 1) {
-            return { ...e, filtered: false }
-          } else if (pattern.test(e.name) || pattern.test(e.funcc) || pattern.test(e.description)) {
-            return { ...e, filtered: false }
-          }
-          return { ...e, filtered: true }
-        })
-      )
+      return { ...prevState, automations: updatedAutomations }
     })
   }
 
   handleItemClick(itemID) {
-    this.setState(prevState => (
-      [...prevState.automations].map((e) => {
-        if (e.id === itemID) {
-          return { ...e, dispatched: true }
-        }
-        return { ...e }
-      })
+    const { automations } = this.state
+    const updatedAutomations = automations.map(e => (
+      e.id === itemID ? { ...e, dispatched: true } : { ...e }
     ))
+
+    this.setState(prevState => ({ ...prevState, automations: updatedAutomations }))
+
+    const toDispatch = updatedAutomations.filter(e => e.dispatched)
+    if (toDispatch.length > 0) {
+      this.socket.emit('dispatch', { automations: toDispatch })
+    }
   }
 
-  updateFilter(text) {
-    this.setState(prevState => Object.assign({ ...prevState }, { filter: text }))
-  }
 
   render() {
-    const { automations, filter } = this.state
+    const { automations } = this.state
     const getVisible = list => list.filter(e => !e.filtered && !e.hidden)
 
     return (
       <div style={{ padding: '15px' }}>
         <Title />
+        <FilterInput
+          onChange={(e, d) => this.automationsFilter(d.value)}
+        />
         <AutomationList
           items={getVisible(automations)}
           onItemClick={itemID => this.handleItemClick(itemID)}
         />
-        <FilterInput onChange={(e, d) => this.updateFilter(d.value)} />
       </div>
     )
   }
