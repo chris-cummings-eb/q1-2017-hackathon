@@ -1,7 +1,7 @@
 from ..chrome import Chrome as __Chrome
 
 
-def open_event_listing(self, event_id=27849228793, environment="qa"):
+def open_event_listing(event_id='27849228793', environment="qa"):
     """description text"""
     chrome = __Chrome()
     chrome.open_event_listing(event_id, environment=environment)
