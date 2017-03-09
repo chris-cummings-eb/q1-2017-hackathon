@@ -8,19 +8,13 @@ import FilterInput from './FilterInput'
 class App extends Component {
   constructor() {
     super()
+    this.socket = io('http://localhost:5555') // eslint-disable-line no-undef
     this.state = {
       automations: [],
     }
   }
-
   componentDidMount() {
-    const socket = io('http://localhost:5555') // eslint-disable-line no-undef
-    socket.on('connect', () => console.log('connected')) // eslint-disable-line no-console
-    socket.on('event', data => console.log('there was an event', data)) // eslint-disable-line no-console
-    socket.on('message', message => console.log(message)) // eslint-disable-line no-console
-
-    // when automations are set, update what is displayed
-    socket.on('automations_list_update', data => this.updateAutomations(data.automations))
+    this.socket.on('automations_list_update', data => this.updateAutomations(data.automations))
   }
 
   updateAutomations(list) {
@@ -51,16 +45,17 @@ class App extends Component {
   }
 
   handleItemClick(itemID) {
-    this.setState((prevState) => {
-      const updatedAutomations = [...prevState.automations].map((e) => {
-        if (e.id === itemID) {
-          return { ...e, dispatched: true }
-        }
-        return { ...e }
-      })
+    const { automations } = this.state
+    const updatedAutomations = automations.map(e => (
+      e.id === itemID ? { ...e, dispatched: true } : { ...e }
+    ))
 
-      return { ...prevState, automations: updatedAutomations }
-    })
+    this.setState(prevState => ({ ...prevState, automations: updatedAutomations }))
+
+    const toDispatch = updatedAutomations.filter(e => e.dispatched)
+    if (toDispatch.length > 0) {
+      this.socket.emit('dispatch', { automations: toDispatch })
+    }
   }
 
 

@@ -9,6 +9,7 @@
   "scripts": {
     "start": "webpack-dev-server --progress",
     "build": "webpack -d --progress",
+    "devbuild": "webpack -d -w --progress",
     "test": "eslint src && flow && jest --coverage",
     "lint": "eslint src webpack.config.babel.js --ext .js,.jsx",
     "precommit": "yarn test"

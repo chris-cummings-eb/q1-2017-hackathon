@@ -1,6 +1,7 @@
 import importlib.util
-import re
 from inspect import getmembers, isfunction
+import re
+import time
 
 from flask import (
     Flask,
@@ -32,7 +33,7 @@ def get_automations(module_list=[], include_defaults=True):
     modules = module_list + [default_automations] if include_defaults else module_list
     return [
             {
-                'id': '{}-{}-{}'.format(module.__name__, obj.__name__, index)',
+                'id': '{}-{}-{}'.format(module.__name__, obj.__name__, index),
                 'name': import_utils.display_name(obj),
                 'description': import_utils.description(obj),
                 'module': module.__name__,
@@ -61,7 +62,18 @@ def run_server(port=None, static_path=None, template_path=None):
 
 
 @socketio.on('connect')
-def handle_connect():
+def update_automations():
+    emit(
+        'automations_list_update',
+        {'automations': get_automations()},
+        broadcast=True
+     )
+
+
+@socketio.on('dispatch')
+def dispatch_automation(data):
+    to_dispatch = data.get('automations')
+    time.sleep(2)
     emit(
         'automations_list_update',
         {'automations': get_automations()},

@@ -38,7 +38,7 @@ def icon_type(python_object):
         flags=re.MULTILINE
     )
 
-    return match.group(0) if match else docstring(python_object)
+    return match.group(0) if match else ''
 
 
 def description(python_object):
