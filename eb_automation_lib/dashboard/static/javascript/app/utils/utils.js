@@ -5,6 +5,6 @@ export function inArray(value, list) {
   list.forEach(e => test.push(e === value))
   test = test.filter(e => e === true)
   return test.length > 0
-}
+} 
 
 export default inArray

@@ -71,7 +71,7 @@ class App extends Component {
 
     const toDispatch = updatedAutomations.filter(e => e.dispatched)
     if (toDispatch.length > 0) {
-      this.socket.emit('dispatch', { automations: toDispatch })
+      this.socket.emit('dispatch', { automations: [...toDispatch] })
     }
   }
 
@@ -79,7 +79,6 @@ class App extends Component {
   render() {
     const { automations } = this.state
     const getVisible = list => list.filter(e => !e.filtered && !e.hidden)
-
     return (
       <div style={{ padding: '15px' }}>
         <Title />

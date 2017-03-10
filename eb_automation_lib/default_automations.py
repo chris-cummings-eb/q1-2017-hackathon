@@ -44,7 +44,6 @@ def open_salesforce_eventbrite_admin_side_by_side(query):
     ##TAGS: event, order, email
     ##ICON: chrome
     """
-
     sf_win, sf_tab = chrome.new_window(url="https://salesforce.com")
     eb_win, eb_tab = chrome.new_window(url=admin_search_url(query))
     chrome.vertical_split_window(sf_win.index(), side="left")

@@ -24,11 +24,14 @@ from .. import default_automations
 
 
 def _serialize(module_list=[], include_defaults=True):
-    """returns a list of meta information about the functions in each module in module_list
+    """returns a list of meta information about the functions in each module at the file paths in module_list
     plus the functions in the default_automations module of this package. if include_defaults=False
     default_automations functions will not be included
     """
-    modules = module_list + [default_automations] if include_defaults else module_list
+    modules = [import_utils.get_module_from_filepath(module) for module in module_list]
+    if include_defaults:
+        modules.append(default_automations)
+
     return [
             {
                 'id': '{}-{}-{}'.format(module.__name__, obj.__name__, index),
@@ -53,7 +56,8 @@ class AutomatorDashboard(Flask):
         Flask.__init__(self, __name__.split('.')[0])
 
         self.automations_list = _serialize(module_list=your_modules, include_defaults=include_defaults)
-        self.automation_modules = your_modules + [default_automations] if include_defaults else your_modules
+        self.automation_modules = your_modules
+        self.include_defautls = include_defaults
         self.queue = Queue(max_workers=4)
         self.queue.start_work()
         self.template_folder = "{root}/{template}".format(
@@ -88,6 +92,11 @@ class AutomatorDashboard(Flask):
 
         return
 
+    def refresh_automations_list(self, *args, callback=None):
+        self.automations_list = args[0]
+        if callable(callback):
+            callback(*args)
+
     def toggle_automation_status(self, automation_ids):
         if isinstance(automation_ids, str):
             automation_ids = [automation_ids]
@@ -110,13 +119,13 @@ class TemplateView(View):
 
 
 class DashboardMessages(Namespace):
-    def __init__(self, dispatch_func, *args, namespace='/'):
+    def __init__(self, callbacks={}, args={}, namespace='/'):
         Namespace.__init__(self, namespace=namespace)
-        self.dispatch_func = dispatch_func
-        self.dispatch_cb_args = args
+        self.callbacks = callbacks
+        self.args = args
 
     def on_connect(self):
-        automations_list, *_ = self.dispatch_cb_args
+        automations_list = self.args.get('dispatch')
         value = clipboard.get_clipboard()
         emit(
             'automations_list_update',
@@ -129,10 +138,19 @@ class DashboardMessages(Namespace):
 
     def on_dispatch(self, data):
         def emit_cb(*args):
-            automations_list, *_ = args
+            automations_list = self.args.get('dispatch')
             emit('automations_list_update', {'automations': automations_list})
 
-        self.dispatch_func(data, emit_cb, cb_args=self.dispatch_cb_args)
+        do = self.callbacks.get('dispatch')
+        do(data, callback=emit_cb, cb_args=self.args.get('dispatch'))
+
+    def on_refresh(self):
+        def emit_cb(*args):
+            args = self.args.get('refresh')
+            emit('automations_list_update', {'automations': args[0]})
+
+        do = self.callbacks.get('refresh')
+        do(self.args.get('refresh'), callback=emit_cb)
 
 
 def monitor_clipboard(on_change):
@@ -154,7 +172,11 @@ def monitor_clipboard(on_change):
 def start_dashboard(your_modules=[], include_defaults=True, port=5555):
     server = AutomatorDashboard(your_modules, include_defaults=include_defaults)
     socketio = SocketIO(server, async_mode='threading')
-    socketio.on_namespace(DashboardMessages(server.dispatch, server.automations_list))
+    socketio.on_namespace(DashboardMessages(
+        callbacks={'dispatch': server.dispatch, 'refresh': server.refresh_automations_list},
+        args={'dispatch': (server.automations_list),
+              'refresh': (_serialize(module_list=server.automation_modules, include_defaults=server.include_defautls))}
+    ))
 
     def do():
         with server.test_request_context('/'):
