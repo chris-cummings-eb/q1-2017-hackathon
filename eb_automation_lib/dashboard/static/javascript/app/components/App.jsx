@@ -17,8 +17,9 @@ class App extends Component {
 
   componentDidMount() {
     this.socket.on('automations_list_update', data => this.updateAutomations(data.automations))
+    this.socket.emit('bullshit', { lol: 'lol' })
     this.socket.on('clipboard', (data) => {
-      console.log(data)
+      console.log('yay!!!', data)
       this.setState(data)
     })
   }

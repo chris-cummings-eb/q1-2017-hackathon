@@ -14,6 +14,7 @@ setup(
         "eventbrite",
         "flask",
         "flask-socketio",
+        "eventlet"
     ],
     zip_safe=False
 )

@@ -117,6 +117,9 @@ class DashboardMessages(Namespace):
             {'automations': automations_list}
          )
 
+    def on_bullshit(self, *args):
+        print("received bullshit!!!\n\n")
+
     def on_dispatch(self, data):
         def emit_cb(*args):
             automations_list, *_ = args
