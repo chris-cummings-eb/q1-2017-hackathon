@@ -11,10 +11,16 @@ class App extends Component {
     this.socket = io('http://localhost:5555') // eslint-disable-line no-undef
     this.state = {
       automations: [],
+      clipboard: '',
     }
   }
+
   componentDidMount() {
     this.socket.on('automations_list_update', data => this.updateAutomations(data.automations))
+    this.socket.on('clipboard', (data) => {
+      console.log(data)
+      this.setState(data)
+    })
   }
 
   updateAutomations(list) {
@@ -60,7 +66,7 @@ class App extends Component {
 
 
   render() {
-    const { automations } = this.state
+    const { automations, clipboard } = this.state
     const getVisible = list => list.filter(e => !e.filtered && !e.hidden)
 
     return (
