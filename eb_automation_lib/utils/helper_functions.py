@@ -22,10 +22,30 @@ EB_SUBDOMAINS = {
     "admin": "admin"
 }
 
-EB_EVENT_REGEX = r"[0-9]{11}"
-EB_ORDER_REGEX = r"[0-9]{9}"
-EB_ORG_REGEX = r"[0-9]{10}"
-EMAIL_REGEX = r"""^(?:(?:[\w`~!#$%^&*\-=+;:{}'|,?\/]+(?:(?:\.(?:"(?:\\?[\w`~!#$%^&*\-=+;:{}'|,?\/\.()<>\[\] @]|\\"|\\\\)*"|[\w`~!#$%^&*\-=+;:{}'|,?\/]+))*\.[\w`~!#$%^&*\-=+;:{}'|,?\/]+)?)|(?:"(?:\\?[\w`~!#$%^&*\-=+;:{}'|,?\/\.()<>\[\] @]|\\"|\\\\)+"))@(?:[a-zA-Z\d\-]+(?:\.[a-zA-Z\d\-]+)*|\[\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\])"""
+EB_REGEX = {
+    'event': r'[0-9]{11}',
+    'order': r"[0-9]{9}",
+    'organizer':  r"[0-9]{10}",
+    'email': r"""^(?:(?:[\w`~!#$%^&*\-=+;:{}'|,?\/]+(?:(?:\.(?:"(?:\\?[\w`~!#$%^&*\-=+;:{}'|,?\/\.()<>\[\] @]|\\"|\\\\)*"|[\w`~!#$%^&*\-=+;:{}'|,?\/]+))*\.[\w`~!#$%^&*\-=+;:{}'|,?\/]+)?)|(?:"(?:\\?[\w`~!#$%^&*\-=+;:{}'|,?\/\.()<>\[\] @]|\\"|\\\\)+"))@(?:[a-zA-Z\d\-]+(?:\.[a-zA-Z\d\-]+)*|\[\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\])"""
+}
+
+
+def string_contains_tags(string):
+    matches = []
+    for k, v in EB_REGEX.items():
+        if re.search(v, string):
+            matches.append(k)
+    return matches
+
+
+def extract_eb_vals(string):
+    matches = []
+    for k, v in EB_REGEX.items():
+        match = re.match(v, string)
+        if match:
+            matches.append(match.group(0))
+
+    return matches
 
 
 def create_timestamp(date=datetime.now()):
@@ -83,38 +103,38 @@ def admin_search_url(query, environment="production"):
 
 
 def is_event_id(string):
-    return bool(re.match(EB_EVENT_REGEX, string))
+    return bool(re.match(EB_REGEX.get('event'), string))
 
 
 def is_order_id(string):
-    return bool(re.match(EB_ORDER_REGEX, string))
+    return bool(re.match(EB_REGEX.get('order'), string))
 
 
 def is_organizer_id(string):
-    return bool(re.match(EB_ORG_REGEX, string))
+    return bool(re.match(EB_REGEX.get('organizer'), string))
 
 
 def is_email_address(string):
-    return bool(re.match(EMAIL_REGEX, string))
+    return bool(re.match(EB_REGEX.get('email'), string))
 
 
 def extract_event_id(string):
-    match = re.search(EB_EVENT_REGEX, string)
+    match = re.search(EB_REGEX.get('event'), string)
     return match.group(0) if match else None
 
 
 def extract_order_id(string):
-    match = re.match(EB_ORDER_REGEX, string)
+    match = re.match(EB_REGEX.get('order'), string)
     return match.group(0) if match else None
 
 
 def extract_organizer_id(string):
-    match = re.match(EB_ORG_REGEX, string)
+    match = re.match(EB_REGEX.get('organizer'), string)
     return match.group(0) if match else None
 
 
 def extract_email_address(string):
-    match = re.match(EMAIL_REGEX, string)
+    match = re.match(EB_REGEX.get('email'), string)
     return match.group(0) if match else None
 
 

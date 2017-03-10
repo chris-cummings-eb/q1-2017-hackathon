@@ -8,6 +8,10 @@ from .task import Task, Queue
 
 # utilites and helpers from the automation library
 from .utils.helper_functions import *
+from .utils.helper_functions import (
+    eventbrite_url_constructor,
+    get_javascript_from_file
+)
 from .utils.window_helpers import (
     get_window_size,
     create_window_position,
@@ -78,21 +82,18 @@ class Chrome(object):
         if url:
             props['URL'] = url
 
-        tab = self._create_tab_object(self, properties=props)
+        tab = self._create_tab_object(properties=props)
         self._append_tab_to_window(tab, window_index=window_index)
         return tab
 
-    def new_window(self, url=None):
+    def new_window(self, url=None, window_props={}):
         """create a new window. If url is specified, the tab is set to that location
         returns the window and tab
         """
-        window = self._create_window_object(properties=properties)
+        window = self._create_window_object(properties=window_props)
         self._append_window_to_application(window)
         if url:
             tab = self.new_tab({"URL": url}, window_index=window.index())
-            for t in window.tabs():
-                if t.id() != tab.id():
-                    t.close()
             return window, tab
 
         return window, window.tabs()[0]
@@ -118,18 +119,8 @@ class Chrome(object):
             create_window_position(get_window_size(window), position)
         )
 
-    def tabs(self, tab_index=None, window_index=None):
-        """returns a list of tab objects for each tab in each window
-        if tab_index is given, returns the tab at the given index of the 0th window, or the given
-        window_index
-        """
-        if window_index and tab_index:
-            return self.windows(window_index).tabs()[tab_index]
-        elif window_index:
-            return self.windows(window_index).tabs()
-        elif tab_index:
-            return self.windows(0).tabs()[0]
-
+    def tabs(self):
+        """returns a list of tab objects for each tab in each window"""
         return [tab for window in self.windows() for tab in window.tabs()]
 
     def tabs_at_url(self, url):
@@ -154,7 +145,7 @@ class Chrome(object):
 
     def vertical_split_window(self, window_index, side="left"):
         """resizes the window at window index and positions it to the left or right side"""
-        return set_window_size_by_percent(self.window(window_index), 50, 100, position=("upper", side))
+        return set_window_size_by_percent(self.windows(window_index), 50, 100, position=("upper", side))
 
     def windows(self, index=None):
         """returns a list of all open window objects or the window at the specified index"""
