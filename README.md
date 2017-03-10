@@ -27,6 +27,7 @@ cd q1-2017-hackathon
 pip install -e .
 ```
 ## 4. change to your project directory and use the lib like this
+`cd .. && cp q1-2017-hackathon/run_dashboard.py . && atom run_dashboard.py`
 **Example**
 ```python
 # import the library
