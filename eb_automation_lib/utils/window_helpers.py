@@ -5,11 +5,8 @@ import sys
 MENU_BAR_HEIGHT = 23
 
 
-def set_window_position(window_size, position, display_size=None):
-    """
-    creates a position tuple and returns it, if a window object is passed in, it will resize
-    that window to the position it returns
-    """
+def create_window_position(window_size, position, display_size=None):
+    """returns a window position tuple"""
     if not (
         position[0].lower() in ["upper", "lower"] and
         position[1].lower() in ["left", "right"]
@@ -45,7 +42,7 @@ def set_window_size_by_percent(window, width_percent, height_percent, position=(
 
     window_size_and_position = create_window_size_object(
         size=(width, height),
-        position=set_window_position((width, height), position)
+        position=create_window_position((width, height), position)
     )
 
     try:

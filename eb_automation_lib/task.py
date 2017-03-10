@@ -50,7 +50,7 @@ class Task:
     task = Task()
     task_id = task.id
     """
-    def __init__(self, todo, args=(), priority=3, description=None, callback=None, callback_args=()):
+    def __init__(self, todo, args=(), priority=3, description=None, callback=None, *callback_args):
         if not callable(todo) and not callable(callback) and callback is not None:
             msg = 'Task todo, callback must be callable. Received: todo: {}, callback: {}'
             raise ValueError(msg.format(todo, callback))
@@ -61,7 +61,7 @@ class Task:
         self.description = description or todo.__str__()
         self.callback = callback
         self.id = str(uuid1())
-        self.callback_args = callback_args if hasattr(callback_args, '__iter__') else (callback_args,)
+        self.callback_args = callback_args
 
     def do(self):
         if self.callback:
