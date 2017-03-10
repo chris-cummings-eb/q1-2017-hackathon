@@ -9,7 +9,7 @@
 ## 5. Install python3 and virtualenv
 ```
 brew install python3
-pip install virtualenv
+pip3 install virtualenv
 ```
 ## 6. In your home directory, create a project folder
 `mkdir ~/automations && cd ~/automations`
