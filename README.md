@@ -20,7 +20,7 @@
 ## 3. install the library
 `cd q1-2017-hackathon && pip install -e .`
 ## 4. change to your project directory and use the lib like this
-`cd .. && cp q1-2017-hackathon/run_dashboard.py . && touch my_automations.py && atom my_automations.py run_dashboard.py`
+`cd .. && cp q1-2017-hackathon/run_dashboard.py . && touch my_automations.py && atom my_automations.py run_dashboard.py`  
 **Example**
 ```python
 # import the library
