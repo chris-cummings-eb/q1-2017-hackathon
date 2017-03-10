@@ -3,7 +3,7 @@
 `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
 ## 2. Install atom
 `brew cask install atom`
-## 3. Open Atom, from Atom Menu, choose: Install Shell Commands then CLOSE ATOM
+## 3. Open Atom, from Atom the Menu, choose: Install Shell Commands then CLOSE ATOM
 ## 4. Install Atom plugins
 `apm install linter linter-pep8 autocomplete-python`
 ## 5. Install python3 and virtualenv
@@ -20,7 +20,7 @@
 ## 3. install the library
 `cd q1-2017-hackathon && pip install -e .`
 ## 4. change to your project directory and use the lib like this
-`cd .. && cp q1-2017-hackathon/run_dashboard.py . && touch my_automations.py && atom my_automations.py run_dashboard.py`  
+`cd .. && cp q1-2017-hackathon/run_dashboard.py . && cp q1-2017-hackathon/my_automations_template.py ./my_automations.py && atom my_automations.py run_dashboard.py`  
 **Example**
 ```python
 # import the library
